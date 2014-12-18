@@ -74,10 +74,28 @@ Client.prototype.getMonitors = function (options, callback) {
       if (monitor.log)
         monitor.log.forEach(function (log) {
           log.datetime = parseDate(log.datetime);
-        })
+        });
     });
     callback(null, monitors);
   });
+};
+
+Client.prototype.newMonitor = function (options, callback) {
+  if (!options.friendlyName) throw new Error('friendlyName is required');
+  if (!options.url) throw new Error('url is required');
+  var params = {
+    monitorFriendlyName:  options.friendlyName,
+    monitorURL:           options.url,
+    monitorType:          options.type || '1',
+    monitorSubType:       options.subType,
+    monitorKeywordType:   options.keywordType,
+    monitorKeywordValue:  options.keywordValue,
+    monitorHTTPUsername:  options.httpUsername,
+    monitorHTTPPassword:  options.httpPassword,
+    monitorAlertContacts: (options.alertContacts || []).join('-'),
+    monitorInterval:      options.interval
+  };
+  return this.request('newMonitor', params, callback);
 };
 
 Client.prototype.deleteMonitor = function (id, callback) {
@@ -97,10 +115,22 @@ Client.prototype.getAlertContacts = function (options, callback) {
 
   return this.request('getAlertContacts', params, function (err, res) {
     if (err) return callback(err);
+    var alertContacts;
     try {
-      var alertContacts = res.alertcontacts.alertcontact;
+      alertContacts = res.alertcontacts.alertcontact;
     } catch(e) { return callback(e); }
     callback(null, alertContacts);
+  });
+};
+
+Client.prototype.getAllAlertContactIds = function (callback) {
+  this.getAlertContacts(function (err, alertContacts) {
+    if (err) return callback(err);
+    var alertContactIds;
+    try {
+      alertContactIds = alertContacts.map(function (c) { return c.id; });
+    } catch(e) { return callback(e); }
+    callback(null, alertContactIds);
   });
 };
 

@@ -25,6 +25,21 @@ options:
 
  - see https://uptimerobot.com/api
 
+### cl.newMonitor(options, fn(err))
+
+options:
+
+ - friendlyName - required
+ - url - required
+ - type - required (Default: 1)
+ - subType - optional (required for port monitoring)
+ - port - optional (required for port monitoring)
+ - keywordType - optional (required for keyword monitoring)
+ - keywordValue - optional (required for keyword monitoring)
+ - httpUsername - optional
+ - httpPassword - optional
+ - alertContacts - optional (array of alert contact ids)
+ - interval - optional (in minutes)
 
 ### cl.deleteMonitor(id, fn(err))
 
@@ -38,6 +53,11 @@ options:
  - alertcontacts - optional (array of alert contact ids)
  - offset - optional (record to start paginating. Default: 0)
  - limit - optional (number of records to return. Default and max: 50)
+
+
+### cl.getAllAlertContactIds(fn(err, alertContacts))
+
+- alertContacts: array of all alert contact ids
 
 ## License
 
