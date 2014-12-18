@@ -30,7 +30,7 @@ function Client(apiKey) {
         try {
           res = JSON.parse(res.toString());
         } catch (ex) {
-          return callback(ex);
+          return callback(makeMalformedResponseError(ex));
         }
         if (res.stat === 'fail') {
           return callback(makeError(res));
@@ -45,6 +45,12 @@ function makeError(res) {
   var err = new Error(res.message);
   err.name = 'UptimeRobotServerError';
   err.code = res.id;
+  return err;
+}
+
+function makeMalformedResponseError(message) {
+  var err = new Error(message);
+  err.name = 'UptimeRobotMalformedResponse';
   return err;
 }
 
