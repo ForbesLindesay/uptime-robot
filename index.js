@@ -80,6 +80,26 @@ Client.prototype.getMonitors = function (options, callback) {
   });
 };
 
+Client.prototype.getAlertContacts = function (options, callback) {
+  if (typeof options === 'function') {
+    callback = options;
+    options = {};
+  }
+  options = options || {};
+  var params = {};
+  if (options.alertcontacts) params.alertcontacts = options.alertcontacts.join('-');
+  if (options.offset) params.offset = options.offset;
+  if (options.limit) params.limit = options.limit;
+
+  return this.request('getAlertContacts', params, function (err, res) {
+    if (err) return callback(err);
+    try {
+      var alertContacts = res.alertcontacts.alertcontact;
+    } catch(e) { return callback(e); }
+    callback(null, alertContacts);
+  });
+};
+
 function guard(fn) {
   var called = false;
   return function () {
