@@ -80,6 +80,10 @@ Client.prototype.getMonitors = function (options, callback) {
   });
 };
 
+Client.prototype.deleteMonitor = function (id, callback) {
+  return this.request('deleteMonitor', { monitorID: id }, callback);
+};
+
 Client.prototype.getAlertContacts = function (options, callback) {
   if (typeof options === 'function') {
     callback = options;

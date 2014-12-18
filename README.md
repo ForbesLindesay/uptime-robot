@@ -26,6 +26,11 @@ options:
  - see https://uptimerobot.com/api
 
 
+### cl.deleteMonitor(id, fn(err))
+
+Delete the monitor with the given id
+
+
 ### cl.getAlertContacts(options, fn(err, alertContacts))
 
 options:
