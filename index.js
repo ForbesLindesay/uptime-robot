@@ -115,7 +115,7 @@ Client.prototype.getAlertContacts = function (options, callback) {
   }
   options = options || {};
   var params = {};
-  if (options.alertcontacts) params.alertcontacts = options.alertcontacts.join('-');
+  if (options.alertContacts) params.alertcontacts = options.alertContacts.join('-');
   if (options.offset) params.offset = options.offset;
   if (options.limit) params.limit = options.limit;
 

@@ -50,7 +50,7 @@ Delete the monitor with the given id
 
 options:
 
- - alertcontacts - optional (array of alert contact ids)
+ - alertContacts - optional (array of alert contact ids)
  - offset - optional (record to start paginating. Default: 0)
  - limit - optional (number of records to return. Default and max: 50)
 
