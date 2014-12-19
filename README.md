@@ -1,10 +1,14 @@
 # Uptime Robot
 
-  A simple node.js API for [uptime robot](http://uptimerobot.com/api)
+A simple node.js and browserify API for [uptime robot](http://uptimerobot.com/api)
 
     $ npm install uptime-robot
 
-  Currently, only some methods are implemented, but pull requests for the missing ones are welcome.
+Currently, only some methods are implemented, but pull requests for the missing ones are welcome.
+
+This library works in the browser using browserify.  You can see a demo by cloning this repo and running `npm run test-browser`.
+
+All methods also return a [Promise](https://www.promisejs.org/) if no callback is provided.
 
 ## Example
 
@@ -62,5 +66,3 @@ options:
 ## License
 
   MIT
-
-![viewcount](https://viewcount.jepso.com/count/forbeslindesay/uptime-robot.png)

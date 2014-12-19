@@ -1,6 +1,7 @@
-var request = require('hyperquest');
-var concat = require('concat-stream');
+'use strict';
+
 var qs = require('querystring');
+var get = require('./lib/server-get.js');
 
 var base = 'http://api.uptimerobot.com/';
 
@@ -10,34 +11,16 @@ function Client(apiKey) {
     throw new Error('Uptime Robot API Key must be provided');
   }
   this.request = function (method, params, callback) {
-    callback = guard(callback);
     params.apiKey = apiKey;
     params.format = 'json';
-    params.noJsonCallback = 1;
 
-    var failed = false;
-
-    request(base + method + '?' + qs.stringify(params),
-      function (err, res) {
-        if (err) {
-          failed = true;
-          return callback(err);
-        }
-      })
-      .pipe(concat(function (err, res) {
-        if (failed) return;
-        if (err) return callback(err);
-        try {
-          res = JSON.parse(res.toString());
-        } catch (ex) {
-          return callback(makeMalformedResponseError(ex));
-        }
-        if (res.stat === 'fail') {
-          return callback(makeError(res));
-        } else {
-          callback(null, res);
-        }
-      }));
+    return get(base + method + '?' + qs.stringify(params)).then(function (res) {
+      if (res.stat === 'fail') {
+        throw makeError(res);
+      } else {
+        return res;
+      }
+    }).nodeify(callback);
   };
 }
 
@@ -45,12 +28,6 @@ function makeError(res) {
   var err = new Error(res.message);
   err.name = 'UptimeRobotServerError';
   err.code = res.id;
-  return err;
-}
-
-function makeMalformedResponseError(message) {
-  var err = new Error(message);
-  err.name = 'UptimeRobotMalformedResponse';
   return err;
 }
 
@@ -69,8 +46,7 @@ Client.prototype.getMonitors = function (options, callback) {
   if (options.showMonitorAlertConcats) params.showMonitorAlertConcats = '1';
   if (options.showTimezone) params.showTimezone = '1';
 
-  return this.request('getMonitors', params, function (err, res) {
-    if (err) return callback(err);
+  return this.request('getMonitors', params).then(function (res) {
     var monitors = res.monitors.monitor;
     monitors.forEach(function (monitor) {
       if (monitor.customuptimeratio)
@@ -82,8 +58,8 @@ Client.prototype.getMonitors = function (options, callback) {
           log.datetime = parseDate(log.datetime);
         });
     });
-    callback(null, monitors);
-  });
+    return monitors;
+  }).nodeify(callback);
 };
 
 Client.prototype.newMonitor = function (options, callback) {
@@ -101,11 +77,11 @@ Client.prototype.newMonitor = function (options, callback) {
     monitorAlertContacts: (options.alertContacts || []).join('-'),
     monitorInterval:      options.interval
   };
-  return this.request('newMonitor', params, callback);
+  return this.request('newMonitor', params).nodeify(callback);
 };
 
 Client.prototype.deleteMonitor = function (id, callback) {
-  return this.request('deleteMonitor', { monitorID: id }, callback);
+  return this.request('deleteMonitor', { monitorID: id }).nodeify(callback);
 };
 
 Client.prototype.getAlertContacts = function (options, callback) {
@@ -119,35 +95,17 @@ Client.prototype.getAlertContacts = function (options, callback) {
   if (options.offset) params.offset = options.offset;
   if (options.limit) params.limit = options.limit;
 
-  return this.request('getAlertContacts', params, function (err, res) {
-    if (err) return callback(err);
-    var alertContacts;
-    try {
-      alertContacts = res.alertcontacts.alertcontact;
-    } catch(e) { return callback(e); }
-    callback(null, alertContacts);
-  });
+  return this.request('getAlertContacts', params).then(function (res) {
+    return res.alertcontacts.alertcontact;
+  }).nodeify(callback);
 };
 
 Client.prototype.getAllAlertContactIds = function (callback) {
-  this.getAlertContacts(function (err, alertContacts) {
-    if (err) return callback(err);
-    var alertContactIds;
-    try {
-      alertContactIds = alertContacts.map(function (c) { return c.id; });
-    } catch(e) { return callback(e); }
-    callback(null, alertContactIds);
-  });
+  return this.getAlertContacts().then(function(alertContacts) {
+    return alertContacts.map(function (c) { return c.id; });
+  }).nodeify(callback);
 };
 
-function guard(fn) {
-  var called = false;
-  return function () {
-    if (called) return;
-    called = true;
-    fn.apply(this, arguments);
-  };
-}
 
 var datePattern = /^(\d\d)\/(\d\d)\/(\d\d\d\d) (\d\d):(\d\d):(\d\d)$/;
 function parseDate(str) {
