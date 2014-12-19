@@ -30,7 +30,7 @@ function Client(apiKey) {
         try {
           res = JSON.parse(res.toString());
         } catch (ex) {
-          return callback(ex);
+          return callback(makeMalformedResponseError(ex));
         }
         if (res.stat === 'fail') {
           return callback(makeError(res));
@@ -45,6 +45,12 @@ function makeError(res) {
   var err = new Error(res.message);
   err.name = 'UptimeRobotServerError';
   err.code = res.id;
+  return err;
+}
+
+function makeMalformedResponseError(message) {
+  var err = new Error(message);
+  err.name = 'UptimeRobotMalformedResponse';
   return err;
 }
 
@@ -74,9 +80,63 @@ Client.prototype.getMonitors = function (options, callback) {
       if (monitor.log)
         monitor.log.forEach(function (log) {
           log.datetime = parseDate(log.datetime);
-        })
+        });
     });
     callback(null, monitors);
+  });
+};
+
+Client.prototype.newMonitor = function (options, callback) {
+  if (!options.friendlyName) throw new Error('friendlyName is required');
+  if (!options.url) throw new Error('url is required');
+  var params = {
+    monitorFriendlyName:  options.friendlyName,
+    monitorURL:           options.url,
+    monitorType:          options.type || '1',
+    monitorSubType:       options.subType,
+    monitorKeywordType:   options.keywordType,
+    monitorKeywordValue:  options.keywordValue,
+    monitorHTTPUsername:  options.httpUsername,
+    monitorHTTPPassword:  options.httpPassword,
+    monitorAlertContacts: (options.alertContacts || []).join('-'),
+    monitorInterval:      options.interval
+  };
+  return this.request('newMonitor', params, callback);
+};
+
+Client.prototype.deleteMonitor = function (id, callback) {
+  return this.request('deleteMonitor', { monitorID: id }, callback);
+};
+
+Client.prototype.getAlertContacts = function (options, callback) {
+  if (typeof options === 'function') {
+    callback = options;
+    options = {};
+  }
+  options = options || {};
+  var params = {};
+  if (options.alertContacts) params.alertcontacts = options.alertContacts.join('-');
+  if (options.offset) params.offset = options.offset;
+  if (options.limit) params.limit = options.limit;
+
+  return this.request('getAlertContacts', params, function (err, res) {
+    if (err) return callback(err);
+    var alertContacts;
+    try {
+      alertContacts = res.alertcontacts.alertcontact;
+    } catch(e) { return callback(e); }
+    callback(null, alertContacts);
+  });
+};
+
+Client.prototype.getAllAlertContactIds = function (callback) {
+  this.getAlertContacts(function (err, alertContacts) {
+    if (err) return callback(err);
+    var alertContactIds;
+    try {
+      alertContactIds = alertContacts.map(function (c) { return c.id; });
+    } catch(e) { return callback(e); }
+    callback(null, alertContactIds);
   });
 };
 
