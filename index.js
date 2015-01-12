@@ -1,7 +1,7 @@
 'use strict';
 
-var qs = require('querystring');
-var get = require('./lib/server-get.js');
+var request = require('then-jsonp');
+var IS_BROWSER = require('is-browser');
 
 var base = 'http://api.uptimerobot.com/';
 
@@ -13,8 +13,13 @@ function Client(apiKey) {
   this.request = function (method, params, callback) {
     params.apiKey = apiKey;
     params.format = 'json';
-
-    return get(base + method + '?' + qs.stringify(params)).then(function (res) {
+    if (!IS_BROWSER) params.noJsonCallback = '1';
+    return request('GET', base + method, {
+      qs: params,
+      callbackName: 'jsonUptimeRobotApi',
+      callbackParameter: false,
+      skipJsonpOnServer: true
+    }).then(function (res) {
       if (res.stat === 'fail') {
         throw makeError(res);
       } else {
