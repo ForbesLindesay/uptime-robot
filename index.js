@@ -3,7 +3,7 @@
 var request = require('then-jsonp');
 var IS_BROWSER = require('is-browser');
 
-var base = 'http://api.uptimerobot.com/';
+var base = 'https://api.uptimerobot.com/';
 
 module.exports = Client;
 function Client(apiKey) {
