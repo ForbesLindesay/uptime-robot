@@ -87,17 +87,18 @@ Client.prototype.newMonitor = function (options, callback) {
 
 Client.prototype.editMonitor = function (options, callback) {
   if (!options.monitorID) throw new Error('monitorID is required');
-  var params = {};
-    params.monitorID = options.monitorID;
-    if (options.FriendlyName) params.monitorFriendlyName = options.friendlyName;
-    if (options.url) params.monitorURL = options.url;
-    if (options.subType) params.monitorSubType = options.subType;
-    if (options.keywordType) params.monitorKeywordType = options.keywordType;
-    if (options.keywordValue) params.monitorKeywordValue = options.keywordValue;
-    if (options.httpUsername) params.monitorHTTPUsername = options.httpUsername;
-    if (options.httpPassword) params.monitorHTTPPassword = options.httpPassword;
-    if (options.alertContacts) params.alertcontacts = options.alertContacts.join('-');
-    if (options.interval) params.monitorInterval = options.interval;
+  var params = {
+    monitorID:            options.monitorID,
+    monitorFriendlyName:  options.friendlyName,
+    monitorURL:           options.url,
+    monitorSubType:       options.subType,
+    monitorKeywordType:   options.keywordType,
+    monitorKeywordValue:  options.keywordValue,
+    monitorHTTPUsername:  options.httpUsername,
+    monitorHTTPPassword:  options.httpPassword,
+    monitorAlertContacts: (options.alertContacts || []).join('-'),
+    monitorInterval:      options.interval
+  };
   return this.request('editMonitor', params).nodeify(callback);
 };
 
