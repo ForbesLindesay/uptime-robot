@@ -98,7 +98,6 @@ Client.prototype.editMonitor = function (options, callback) {
     if (options.httpPassword) params.monitorHTTPPassword = options.httpPassword;
     if (options.alertContacts) params.alertcontacts = options.alertContacts.join('-');
     if (options.interval) params.monitorInterval = options.interval;
-  };
   return this.request('editMonitor', params).nodeify(callback);
 };
 
