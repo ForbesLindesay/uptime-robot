@@ -45,6 +45,22 @@ options:
  - alertContacts - optional (array of alert contact ids)
  - interval - optional (in minutes)
 
+### cl.editMonitor(options, fn(err))
+
+options:
+
+ - monitorID - required
+ - friendlyName - optional
+ - url - optional
+ - subType - optional (used only for port monitoring)
+ - port - optional (used only for port monitoring)
+ - keywordType - optional (used only for keyword monitoring)
+ - keywordValue - optional (used only for keyword monitoring)
+ - httpUsername - optional
+ - httpPassword - optional
+ - alertContacts - optional (array of alert contact ids)
+ - interval - optional (in minutes)
+
 ### cl.deleteMonitor(id, fn(err))
 
 Delete the monitor with the given id

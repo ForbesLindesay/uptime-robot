@@ -3,7 +3,7 @@
 var request = require('then-jsonp');
 var IS_BROWSER = require('is-browser');
 
-var base = 'http://api.uptimerobot.com/';
+var base = 'https://api.uptimerobot.com/';
 
 module.exports = Client;
 function Client(apiKey) {
@@ -83,6 +83,23 @@ Client.prototype.newMonitor = function (options, callback) {
     monitorInterval:      options.interval
   };
   return this.request('newMonitor', params).nodeify(callback);
+};
+
+Client.prototype.editMonitor = function (options, callback) {
+  if (!options.monitorID) throw new Error('monitorID is required');
+  var params = {
+    monitorID:            options.monitorID,
+    monitorFriendlyName:  options.friendlyName,
+    monitorURL:           options.url,
+    monitorSubType:       options.subType,
+    monitorKeywordType:   options.keywordType,
+    monitorKeywordValue:  options.keywordValue,
+    monitorHTTPUsername:  options.httpUsername,
+    monitorHTTPPassword:  options.httpPassword,
+    monitorAlertContacts: (options.alertContacts || []).join('-'),
+    monitorInterval:      options.interval
+  };
+  return this.request('editMonitor', params).nodeify(callback);
 };
 
 Client.prototype.deleteMonitor = function (id, callback) {
