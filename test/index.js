@@ -9,7 +9,15 @@ cl.getMonitors({customUptimeRatio: [1, 7, 30]}, function (err, res) {
   assert(Array.isArray(res));
   assert(res.length === 1);
   assert(res[0].id === '776540955');
-  console.log(res);
-  console.log('tests passed');
-  process && process.exit && process.exit(0);
+  console.log('getMonitors', res);
+  console.log('getMonitors passed');
 });
+
+cl.resetMonitor('776540955', function (err, res) {
+  if (err) throw err;
+  assert(res.stat === 'ok');
+  console.log('resetMonitor', res);
+  console.log('resetMonitor passed');
+});
+
+process && process.exit && process.exit(0);

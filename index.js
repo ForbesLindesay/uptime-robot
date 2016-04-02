@@ -106,6 +106,10 @@ Client.prototype.deleteMonitor = function (id, callback) {
   return this.request('deleteMonitor', { monitorID: id }).nodeify(callback);
 };
 
+Client.prototype.resetMonitor = function (id, callback) {
+  return this.request('resetMonitor', { monitorID: id }).nodeify(callback);
+};
+
 Client.prototype.getAlertContacts = function (options, callback) {
   if (typeof options === 'function') {
     callback = options;
