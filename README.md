@@ -63,7 +63,15 @@ options:
 
 ### cl.deleteMonitor(id, fn(err))
 
-Delete the monitor with the given id
+options:
+
+ - monitorID - required
+
+### cl.resetMonitor(id, fn(err))
+
+options:
+
+ - monitorID - required
 
 
 ### cl.getAlertContacts(options, fn(err, alertContacts))
