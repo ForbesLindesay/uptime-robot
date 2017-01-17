@@ -50,6 +50,7 @@ Client.prototype.getMonitors = function (options, callback) {
   if (options.alertContacts) params.alertContacts = '1';
   if (options.showMonitorAlertConcats) params.showMonitorAlertConcats = '1';
   if (options.showTimezone) params.showTimezone = '1';
+  if (options.responseTimes) params.responseTimes  = '1';
 
   return this.request('getMonitors', params).then(function (res) {
     var monitors = res.monitors.monitor;
