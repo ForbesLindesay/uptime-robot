@@ -1,5 +1,7 @@
 # Uptime Robot
 
+[![Greenkeeper badge](https://badges.greenkeeper.io/ForbesLindesay/uptime-robot.svg)](https://greenkeeper.io/)
+
 A simple node.js and browserify API for [uptime robot](http://uptimerobot.com/api)
 
     $ npm install uptime-robot
