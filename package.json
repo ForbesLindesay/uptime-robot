@@ -9,7 +9,7 @@
   "author": "ForbesLindesay",
   "license": "MIT",
   "dependencies": {
-    "is-browser": "^2.0.1",
+    "is-browser": "^2.1.0",
     "then-jsonp": "^1.0.1"
   },
   "scripts": {
