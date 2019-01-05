@@ -10,7 +10,7 @@
   "license": "MIT",
   "dependencies": {
     "is-browser": "^2.0.1",
-    "then-jsonp": "^1.0.1"
+    "then-jsonp": "^1.0.3"
   },
   "scripts": {
     "test": "node test",
